@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>core.scheduler module &#8212; CommAI-env 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CommAI-env 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-core.scheduler">
+<span id="core-scheduler-module"></span><h1>core.scheduler module<a class="headerlink" href="#module-core.scheduler" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="core.scheduler.DependenciesTaskScheduler">
+<em class="property">class </em><code class="sig-prename descclassname">core.scheduler.</code><code class="sig-name descname">DependenciesTaskScheduler</code><span class="sig-paren">(</span><em class="sig-param">tasks</em>, <em class="sig-param">tasks_dependencies</em>, <em class="sig-param">unlock_threshold=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#DependenciesTaskScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.DependenciesTaskScheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Takes a dependency graph between the tasks and randomly allocates between
+the ones that are at the root, or are dependent on other tasks that
+have been solved (based on a threshold)</p>
+<dl class="method">
+<dt id="core.scheduler.DependenciesTaskScheduler.find_available_tasks">
+<code class="sig-name descname">find_available_tasks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#DependenciesTaskScheduler.find_available_tasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.DependenciesTaskScheduler.find_available_tasks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.scheduler.DependenciesTaskScheduler.get_next_task">
+<code class="sig-name descname">get_next_task</code><span class="sig-paren">(</span><em class="sig-param">train_mode=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#DependenciesTaskScheduler.get_next_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.DependenciesTaskScheduler.get_next_task" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.scheduler.DependenciesTaskScheduler.get_task_id">
+<code class="sig-name descname">get_task_id</code><span class="sig-paren">(</span><em class="sig-param">task</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#DependenciesTaskScheduler.get_task_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.DependenciesTaskScheduler.get_task_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.scheduler.DependenciesTaskScheduler.pick_new_task">
+<code class="sig-name descname">pick_new_task</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#DependenciesTaskScheduler.pick_new_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.DependenciesTaskScheduler.pick_new_task" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.scheduler.DependenciesTaskScheduler.solved">
+<code class="sig-name descname">solved</code><span class="sig-paren">(</span><em class="sig-param">task</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#DependenciesTaskScheduler.solved"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.DependenciesTaskScheduler.solved" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.scheduler.DependenciesTaskScheduler.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param">reward</em>, <em class="sig-param">train_mode=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#DependenciesTaskScheduler.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.DependenciesTaskScheduler.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="core.scheduler.IncrementalTaskScheduler">
+<em class="property">class </em><code class="sig-prename descclassname">core.scheduler.</code><code class="sig-name descname">IncrementalTaskScheduler</code><span class="sig-paren">(</span><em class="sig-param">tasks</em>, <em class="sig-param">success_threshold=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#IncrementalTaskScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.IncrementalTaskScheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Switches to the next task type sequentially
+After the current task was successfully learned N times</p>
+<dl class="method">
+<dt id="core.scheduler.IncrementalTaskScheduler.get_next_task">
+<code class="sig-name descname">get_next_task</code><span class="sig-paren">(</span><em class="sig-param">train_mode=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#IncrementalTaskScheduler.get_next_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.IncrementalTaskScheduler.get_next_task" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.scheduler.IncrementalTaskScheduler.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param">reward</em>, <em class="sig-param">train_mode=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#IncrementalTaskScheduler.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.IncrementalTaskScheduler.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="core.scheduler.IntervalTaskScheduler">
+<em class="property">class </em><code class="sig-prename descclassname">core.scheduler.</code><code class="sig-name descname">IntervalTaskScheduler</code><span class="sig-paren">(</span><em class="sig-param">tasks</em>, <em class="sig-param">intervals</em>, <em class="sig-param">tasks_test=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#IntervalTaskScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.IntervalTaskScheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Switches to the next task type sequentially
+After the current task was successfully learned N times</p>
+<dl class="method">
+<dt id="core.scheduler.IntervalTaskScheduler.find_available_tasks">
+<code class="sig-name descname">find_available_tasks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#IntervalTaskScheduler.find_available_tasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.IntervalTaskScheduler.find_available_tasks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.scheduler.IntervalTaskScheduler.get_next_task">
+<code class="sig-name descname">get_next_task</code><span class="sig-paren">(</span><em class="sig-param">train_mode=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#IntervalTaskScheduler.get_next_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.IntervalTaskScheduler.get_next_task" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.scheduler.IntervalTaskScheduler.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param">reward</em>, <em class="sig-param">train_mode=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#IntervalTaskScheduler.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.IntervalTaskScheduler.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="core.scheduler.RandomTaskScheduler">
+<em class="property">class </em><code class="sig-prename descclassname">core.scheduler.</code><code class="sig-name descname">RandomTaskScheduler</code><span class="sig-paren">(</span><em class="sig-param">tasks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#RandomTaskScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.RandomTaskScheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Scheduler provides new tasks every time is asked.
+This is a random scheduler</p>
+<dl class="method">
+<dt id="core.scheduler.RandomTaskScheduler.get_next_task">
+<code class="sig-name descname">get_next_task</code><span class="sig-paren">(</span><em class="sig-param">train_mode=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#RandomTaskScheduler.get_next_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.RandomTaskScheduler.get_next_task" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.scheduler.RandomTaskScheduler.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param">reward</em>, <em class="sig-param">train_mode=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#RandomTaskScheduler.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.RandomTaskScheduler.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="core.scheduler.SequentialTaskScheduler">
+<em class="property">class </em><code class="sig-prename descclassname">core.scheduler.</code><code class="sig-name descname">SequentialTaskScheduler</code><span class="sig-paren">(</span><em class="sig-param">tasks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#SequentialTaskScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.SequentialTaskScheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Scheduler provides new tasks every time is asked.
+This is a random scheduler</p>
+<dl class="method">
+<dt id="core.scheduler.SequentialTaskScheduler.get_next_task">
+<code class="sig-name descname">get_next_task</code><span class="sig-paren">(</span><em class="sig-param">train_mode=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#SequentialTaskScheduler.get_next_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.SequentialTaskScheduler.get_next_task" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.scheduler.SequentialTaskScheduler.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param">reward</em>, <em class="sig-param">train_mode=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#SequentialTaskScheduler.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.SequentialTaskScheduler.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="core.scheduler.check_continuity">
+<code class="sig-prename descclassname">core.scheduler.</code><code class="sig-name descname">check_continuity</code><span class="sig-paren">(</span><em class="sig-param">Intvs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#check_continuity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.check_continuity" title="Permalink to this definition">¶</a></dt>
+<dd><p>verify that there is continuity in the list Intvs</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.scheduler.check_intervals">
+<code class="sig-prename descclassname">core.scheduler.</code><code class="sig-name descname">check_intervals</code><span class="sig-paren">(</span><em class="sig-param">I_s</em>, <em class="sig-param">I_b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#check_intervals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.check_intervals" title="Permalink to this definition">¶</a></dt>
+<dd><p>check if the interval I_s is within I_b</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.scheduler.dic_interval_task">
+<code class="sig-prename descclassname">core.scheduler.</code><code class="sig-name descname">dic_interval_task</code><span class="sig-paren">(</span><em class="sig-param">intervals</em>, <em class="sig-param">tasks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/scheduler.html#dic_interval_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.scheduler.dic_interval_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct the dictionary {interval:[available_tasks]} for training
+and testing mode</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/core.scheduler.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CommAI-env 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Facebook.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

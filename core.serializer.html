@@ -1,0 +1,244 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>core.serializer module &#8212; CommAI-env 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CommAI-env 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-core.serializer">
+<span id="core-serializer-module"></span><h1>core.serializer module<a class="headerlink" href="#module-core.serializer" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="core.serializer.ASCIISerializer">
+<em class="property">class </em><code class="sig-prename descclassname">core.serializer.</code><code class="sig-name descname">ASCIISerializer</code><a class="reference internal" href="_modules/core/serializer.html#ASCIISerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.ASCIISerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Transforms text into bits and back according to ASCII format.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="core.serializer.GeneralSerializer">
+<em class="property">class </em><code class="sig-prename descclassname">core.serializer.</code><code class="sig-name descname">GeneralSerializer</code><span class="sig-paren">(</span><em class="sig-param">i2s</em>, <em class="sig-param">silence_idx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#GeneralSerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.GeneralSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Transforms text into bits and back using specified mapping.
+Expects an index to symbol mapping <cite>i2s</cite>.
+silence_idx is which index in mapping is silence, defaults to 0</p>
+<dl class="method">
+<dt id="core.serializer.GeneralSerializer.can_deserialize">
+<code class="sig-name descname">can_deserialize</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#GeneralSerializer.can_deserialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.GeneralSerializer.can_deserialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.serializer.GeneralSerializer.to_binary">
+<code class="sig-name descname">to_binary</code><span class="sig-paren">(</span><em class="sig-param">message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#GeneralSerializer.to_binary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.GeneralSerializer.to_binary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a text message, returns a binary string (still represented as a
+character string).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.serializer.GeneralSerializer.to_text">
+<code class="sig-name descname">to_text</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#GeneralSerializer.to_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.GeneralSerializer.to_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a binary string into text.</p>
+<p>Given a binary string, returns the encoded text. If the
+string cannot be deserialized, returns None.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data: the binary string to deserialze.</p>
+</dd>
+</dl>
+<p>Returns: A string with containing the decoded text.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="core.serializer.IdentitySerializer">
+<em class="property">class </em><code class="sig-prename descclassname">core.serializer.</code><code class="sig-name descname">IdentitySerializer</code><a class="reference internal" href="_modules/core/serializer.html#IdentitySerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.IdentitySerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Skips the serialization and just returns the text as-is.</p>
+<dl class="method">
+<dt id="core.serializer.IdentitySerializer.can_deserialize">
+<code class="sig-name descname">can_deserialize</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#IdentitySerializer.can_deserialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.IdentitySerializer.can_deserialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.serializer.IdentitySerializer.to_binary">
+<code class="sig-name descname">to_binary</code><span class="sig-paren">(</span><em class="sig-param">message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#IdentitySerializer.to_binary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.IdentitySerializer.to_binary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.serializer.IdentitySerializer.to_text">
+<code class="sig-name descname">to_text</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#IdentitySerializer.to_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.IdentitySerializer.to_text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="core.serializer.ScramblingSerializerWrapper">
+<em class="property">class </em><code class="sig-prename descclassname">core.serializer.</code><code class="sig-name descname">ScramblingSerializerWrapper</code><span class="sig-paren">(</span><em class="sig-param">serializer</em>, <em class="sig-param">readable=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#ScramblingSerializerWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.ScramblingSerializerWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This is wrapper for any serializer that, on top of the serialization step,
+scrambles the words so they are unintelligible to human readers.
+Note: the scrambling process has two steps: a forward (during to_binary)
+where a new word is assigned to each input token and a backward (during
+to_text) where the word is translated back to its original form.
+If a word that has not been generated during the forward pass is sent to
+the backward pass, this word is left unchanged. As a consequence, if the
+learner uses a word (e.g “apple”) before it has been uttered by the
+environment, it will go through unchanged. If at any point, the environment
+starts using this word, it will get assigned a new scrambled string (e.g.
+“vsdsf”), and now “apple” that was going through unchanged before, it’s
+being mapped to a new string.</p>
+<dl class="method">
+<dt id="core.serializer.ScramblingSerializerWrapper.can_deserialize">
+<code class="sig-name descname">can_deserialize</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#ScramblingSerializerWrapper.can_deserialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.ScramblingSerializerWrapper.can_deserialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.serializer.ScramblingSerializerWrapper.capitalize">
+<code class="sig-name descname">capitalize</code><span class="sig-paren">(</span><em class="sig-param">word</em>, <em class="sig-param">scrambled_word</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#ScramblingSerializerWrapper.capitalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.ScramblingSerializerWrapper.capitalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.serializer.ScramblingSerializerWrapper.gen_pseudo_word">
+<code class="sig-name descname">gen_pseudo_word</code><span class="sig-paren">(</span><em class="sig-param">L=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#ScramblingSerializerWrapper.gen_pseudo_word"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.ScramblingSerializerWrapper.gen_pseudo_word" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.serializer.ScramblingSerializerWrapper.scramble">
+<code class="sig-name descname">scramble</code><span class="sig-paren">(</span><em class="sig-param">token</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#ScramblingSerializerWrapper.scramble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.ScramblingSerializerWrapper.scramble" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.serializer.ScramblingSerializerWrapper.to_binary">
+<code class="sig-name descname">to_binary</code><span class="sig-paren">(</span><em class="sig-param">message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#ScramblingSerializerWrapper.to_binary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.ScramblingSerializerWrapper.to_binary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.serializer.ScramblingSerializerWrapper.to_text">
+<code class="sig-name descname">to_text</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#ScramblingSerializerWrapper.to_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.ScramblingSerializerWrapper.to_text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.serializer.ScramblingSerializerWrapper.tokenize">
+<code class="sig-name descname">tokenize</code><span class="sig-paren">(</span><em class="sig-param">message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#ScramblingSerializerWrapper.tokenize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.ScramblingSerializerWrapper.tokenize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simplified tokenizer that splits a message over spaces and punctuation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.serializer.ScramblingSerializerWrapper.unscramble">
+<code class="sig-name descname">unscramble</code><span class="sig-paren">(</span><em class="sig-param">token</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#ScramblingSerializerWrapper.unscramble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.ScramblingSerializerWrapper.unscramble" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="core.serializer.StandardSerializer">
+<em class="property">class </em><code class="sig-prename descclassname">core.serializer.</code><code class="sig-name descname">StandardSerializer</code><a class="reference internal" href="_modules/core/serializer.html#StandardSerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.StandardSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Transforms text into bits and back using UTF-8 format.</p>
+<dl class="method">
+<dt id="core.serializer.StandardSerializer.can_deserialize">
+<code class="sig-name descname">can_deserialize</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#StandardSerializer.can_deserialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.StandardSerializer.can_deserialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.serializer.StandardSerializer.to_binary">
+<code class="sig-name descname">to_binary</code><span class="sig-paren">(</span><em class="sig-param">message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#StandardSerializer.to_binary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.StandardSerializer.to_binary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a text message, returns a binary string (still represented as a
+character string).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.serializer.StandardSerializer.to_text">
+<code class="sig-name descname">to_text</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">strict=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/serializer.html#StandardSerializer.to_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.serializer.StandardSerializer.to_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a binary string into text.</p>
+<p>Given a binary string, returns the UTF-8 encoded text. If the
+string cannot be deserialized, returns None. It can also try to
+recover from meaningless data by skipping a few bytes in the beginning.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data: the binary string to deserialze.
+strict: if False, the initial bytes can be skipped in order to
+find a valid character. This allows to recover from randomly
+produced bit strings.</p>
+</dd>
+</dl>
+<p>Returns: A string with containing the decoded text.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/core.serializer.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CommAI-env 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Facebook.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

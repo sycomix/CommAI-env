@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>core.config_loader module &#8212; CommAI-env 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CommAI-env 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-core.config_loader">
+<span id="core-config-loader-module"></span><h1>core.config_loader module<a class="headerlink" href="#module-core.config_loader" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="core.config_loader.JSONConfigLoader">
+<em class="property">class </em><code class="sig-prename descclassname">core.config_loader.</code><code class="sig-name descname">JSONConfigLoader</code><a class="reference internal" href="_modules/core/config_loader.html#JSONConfigLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.config_loader.JSONConfigLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Loads a set of tasks and a schedule for them from a JSON file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;tasks&quot;</span><span class="p">:</span>
+  <span class="p">{</span>
+    <span class="s2">&quot;&lt;task_id&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;task_class&gt;&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;&lt;task_id&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;task_class&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;world&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;world_id&gt;&quot;</span>
+    <span class="p">}</span>
+    <span class="s2">&quot;...&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;worlds&quot;</span><span class="p">:</span>
+  <span class="p">{</span>
+    <span class="s2">&quot;&lt;world_id&gt;&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;world_class&gt;&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;scheduler&quot;</span><span class="p">:</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;scheduler_class&gt;&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s2">&quot;&lt;scheduler_arg&gt;&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">scheduler_arg_value</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The scheduler scheduler_arg_value could be a container including
+task ids, which will be replaced by the concrete tasks instances.</p>
+<dl class="method">
+<dt id="core.config_loader.JSONConfigLoader.create_tasks">
+<code class="sig-name descname">create_tasks</code><span class="sig-paren">(</span><em class="sig-param">tasks_config_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/config_loader.html#JSONConfigLoader.create_tasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.config_loader.JSONConfigLoader.create_tasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a json configuartion file, it returns a scheduler object
+set up as described in the file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.config_loader.JSONConfigLoader.instantiate_task">
+<code class="sig-name descname">instantiate_task</code><span class="sig-paren">(</span><em class="sig-param">task_class</em>, <em class="sig-param">args</em>, <em class="sig-param">worlds</em>, <em class="sig-param">world_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/config_loader.html#JSONConfigLoader.instantiate_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.config_loader.JSONConfigLoader.instantiate_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a task object given the task class and the world where it
+runs (if any)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.config_loader.JSONConfigLoader.instantiate_world">
+<code class="sig-name descname">instantiate_world</code><span class="sig-paren">(</span><em class="sig-param">world_class</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/config_loader.html#JSONConfigLoader.instantiate_world"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.config_loader.JSONConfigLoader.instantiate_world" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a world object given the world class</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="core.config_loader.PythonConfigLoader">
+<em class="property">class </em><code class="sig-prename descclassname">core.config_loader.</code><code class="sig-name descname">PythonConfigLoader</code><a class="reference internal" href="_modules/core/config_loader.html#PythonConfigLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.config_loader.PythonConfigLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Loads a python file containing a stand-alone function called
+<cite>create_tasks</cite> that returns a TaskScheduler object.</p>
+<dl class="method">
+<dt id="core.config_loader.PythonConfigLoader.create_tasks">
+<code class="sig-name descname">create_tasks</code><span class="sig-paren">(</span><em class="sig-param">tasks_config_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/config_loader.html#PythonConfigLoader.create_tasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.config_loader.PythonConfigLoader.create_tasks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="core.config_loader.get_class">
+<code class="sig-prename descclassname">core.config_loader.</code><code class="sig-name descname">get_class</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/config_loader.html#get_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.config_loader.get_class" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="core.config_loader.map_tasks">
+<code class="sig-prename descclassname">core.config_loader.</code><code class="sig-name descname">map_tasks</code><span class="sig-paren">(</span><em class="sig-param">arg</em>, <em class="sig-param">tasks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/core/config_loader.html#map_tasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.config_loader.map_tasks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/core.config_loader.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CommAI-env 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Facebook.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

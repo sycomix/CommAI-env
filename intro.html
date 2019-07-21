@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Introduction &#8212; CommAI-env 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CommAI-env 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>The code in the CommAI-env models a simulation scenario in which a
+<strong>Learner</strong> communicates with an <strong>Environment</strong> who impersonates a teacher
+asking the Learner to perform tasks and rewarding it when it does so. The tasks
+are performed through natural language communication, in the same way as the
+instructions are given. The communication is performed through a low-level
+signal, where characters are encoded as bit sequences. The responsible for the
+encoding and decoding of these sequences are the <strong>InputChannel</strong> and
+<strong>OutputChannel</strong> objects in the Environment. The Learner and the
+Environment will interchange (exactly) one bit at a time. Obviously, one of them
+should have nothing to say while the other is speaking. Therefore, a particular
+bit sequence is going to represent “being silent”. Indeed, all the competition
+is centered around assigning meaning to particular sequences of bits that
+encode natural language commands.</p>
+<p>The communication between the Learner and the Environment is handled by the
+<strong>Session</strong>, which forwards the bits produced by each of the participants and
+the rewards given to the Learner. For each bit sent, the Session blocks
+waiting for the next bit to be sent back. The cumulative rewards and time steps
+are recorded for performance evaluation.</p>
+<p>A Learner is just any object that can handle a <cite>next</cite> method, which
+given a bit it returns its next bit, and a <cite>reward</cite> method that informs the
+learner about a received reward.</p>
+<p>The Environment, on the other hand, executes one <strong>Task</strong> at a time based on a
+<em>Scheduler</em>’s decision. A Task is defined through a set of messages and rewards
+that are delivered to the Learner by the Environment as a reaction to different
+kinds of Events. The possible events are described throughly in <a class="reference internal" href="creating_tasks.html#events"><span class="std std-ref">Event Handlers</span></a>.
+To capture these events, the Environment registers <strong>Triggers</strong> to an
+<strong>EventManager</strong>. The <strong>Triggers</strong> consist simply on: a type of event,
+a condition to filter out events by specific details and a callback function
+that will be invoked when an Event arrises. When an event is handled by
+some function, it can either modify some internal variables to keep track
+of some information, or interact with the learner by either setting the message
+that is being sent through the Environment’s Output Channel and/or <em>set the
+reward to end the current task</em>. If the reward is given together with a message,
+the Environment sends out the message and then rewards the learner just before
+switching to the next task. During this “extra time” no other events are
+processed. Also, events can be handled concurrently. This implies that
+different (conflicting) messages (and rewards) could be sent to the learner.
+Conflicts are solved through defining a priority for the messages.</p>
+<p>Finally, a Task can run within a certain World. A World, is composed
+ultimately of the same elements of a Task: some state variables and
+Triggers and can interact with the Learner. The goal of this entity is to have
+consistent across tasks states and behaviors. A Task can access the state
+variables of the world, and listen for changes on them. The World, on the other
+hand, cannot access the Task that is being run on.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/intro.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CommAI-env 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Facebook.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

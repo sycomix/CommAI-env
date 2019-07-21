@@ -1,0 +1,423 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>core.serializer &#8212; CommAI-env 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">CommAI-env 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for core.serializer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2016-present, Facebook, Inc.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># This source code is licensed under the BSD-style license found in the</span>
+<span class="c1"># LICENSE file in the root directory of this source tree. An additional grant</span>
+<span class="c1"># of patent rights can be found in the PATENTS file in the same directory.</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">codecs</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+
+<div class="viewcode-block" id="IdentitySerializer"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.IdentitySerializer">[docs]</a><span class="k">class</span> <span class="nc">IdentitySerializer</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Skips the serialization and just returns the text as-is.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SILENCE_TOKEN</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="IdentitySerializer.to_binary"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.IdentitySerializer.to_binary">[docs]</a>    <span class="k">def</span> <span class="nf">to_binary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">message</span></div>
+
+<div class="viewcode-block" id="IdentitySerializer.to_text"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.IdentitySerializer.to_text">[docs]</a>    <span class="k">def</span> <span class="nf">to_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="IdentitySerializer.can_deserialize"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.IdentitySerializer.can_deserialize">[docs]</a>    <span class="k">def</span> <span class="nf">can_deserialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">data</span></div></div>
+
+
+<div class="viewcode-block" id="ScramblingSerializerWrapper"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.ScramblingSerializerWrapper">[docs]</a><span class="k">class</span> <span class="nc">ScramblingSerializerWrapper</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This is wrapper for any serializer that, on top of the serialization step,</span>
+<span class="sd">    scrambles the words so they are unintelligible to human readers.</span>
+<span class="sd">    Note: the scrambling process has two steps: a forward (during to_binary)</span>
+<span class="sd">    where a new word is assigned to each input token and a backward (during</span>
+<span class="sd">    to_text) where the word is translated back to its original form.</span>
+<span class="sd">    If a word that has not been generated during the forward pass is sent to</span>
+<span class="sd">    the backward pass, this word is left unchanged. As a consequence, if the</span>
+<span class="sd">    learner uses a word (e.g &quot;apple&quot;) before it has been uttered by the</span>
+<span class="sd">    environment, it will go through unchanged. If at any point, the environment</span>
+<span class="sd">    starts using this word, it will get assigned a new scrambled string (e.g.</span>
+<span class="sd">    &quot;vsdsf&quot;), and now &quot;apple&quot; that was going through unchanged before, it&#39;s</span>
+<span class="sd">    being mapped to a new string.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serializer</span><span class="p">,</span> <span class="n">readable</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            serialzer: underlying serializer that will get the calls forwarded.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># the underlying serializer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_serializer</span> <span class="o">=</span> <span class="n">serializer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SILENCE_TOKEN</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">SILENCE_TOKEN</span>
+        <span class="c1"># &#39;vowels&#39; and &#39;consonants&#39; (to be alternated if readable = true)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">readable</span> <span class="o">=</span> <span class="n">readable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">V</span> <span class="o">=</span> <span class="s1">&#39;aeiouy&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">C</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">])</span>
+        <span class="c1"># a mapping of real words to scrambled words an back</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">word_mapping</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inv_word_mapping</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ScramblingSerializerWrapper.to_binary"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.ScramblingSerializerWrapper.to_binary">[docs]</a>    <span class="k">def</span> <span class="nf">to_binary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Tokenizing message &#39;</span><span class="si">{0}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+        <span class="c1"># get all the parts of the message without cutting the spaces out</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scrambling message &#39;</span><span class="si">{0}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tokens</span><span class="p">))</span>
+        <span class="c1"># transform each of the pieces (if needed) and merge them together</span>
+        <span class="n">scrambled_message</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scramble</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Returning scrambled message &#39;</span><span class="si">{0}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">scrambled_message</span><span class="p">))</span>
+        <span class="c1"># pass it on to the real serializer</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serializer</span><span class="o">.</span><span class="n">to_binary</span><span class="p">(</span><span class="n">scrambled_message</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ScramblingSerializerWrapper.to_text"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.ScramblingSerializerWrapper.to_text">[docs]</a>    <span class="k">def</span> <span class="nf">to_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="c1"># get the scrambled message back from the bits</span>
+        <span class="n">scrambled_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serializer</span><span class="o">.</span><span class="n">to_text</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="c1"># split into tokens, including spaces and punctuation marks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Tokenizing </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scrambled_message</span><span class="p">))</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">scrambled_message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Unscrambling </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tokens</span><span class="p">))</span>
+        <span class="c1"># unmask the words in it</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unscramble</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ScramblingSerializerWrapper.can_deserialize"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.ScramblingSerializerWrapper.can_deserialize">[docs]</a>    <span class="k">def</span> <span class="nf">can_deserialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serializer</span><span class="o">.</span><span class="n">can_deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># get the scrambled message back from the bits</span>
+        <span class="n">scrambled_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serializer</span><span class="o">.</span><span class="n">to_text</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="c1"># split into tokens, including spaces and punctuation marks</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">scrambled_message</span><span class="p">)</span>
+        <span class="c1"># to deserialize we have to be at the end of a word.</span>
+        <span class="k">return</span> <span class="n">tokens</span> <span class="ow">and</span> <span class="n">tokens</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;WORD&#39;</span></div>
+
+<div class="viewcode-block" id="ScramblingSerializerWrapper.scramble"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.ScramblingSerializerWrapper.scramble">[docs]</a>    <span class="k">def</span> <span class="nf">scramble</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="n">word</span><span class="p">,</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">token</span>
+        <span class="k">if</span> <span class="n">pos</span> <span class="o">==</span> <span class="s1">&#39;SILENCE&#39;</span> <span class="ow">or</span> <span class="n">pos</span> <span class="o">==</span> <span class="s1">&#39;PUNCT&#39;</span><span class="p">:</span>
+            <span class="c1"># if this is a space or a punctuation sign, don&#39;t do anything</span>
+            <span class="k">return</span> <span class="n">word</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_mapping</span><span class="p">:</span>
+                <span class="c1"># if we don&#39;t have a pseudo-word already assigned</span>
+                <span class="c1"># generate a new pseudo-word</span>
+                <span class="n">pseudo_word</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen_pseudo_word</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">word_mapping</span><span class="p">[</span><span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="n">pseudo_word</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">inv_word_mapping</span><span class="p">[</span><span class="n">pseudo_word</span><span class="p">]</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">capitalize</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_mapping</span><span class="p">[</span><span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()])</span></div>
+
+<div class="viewcode-block" id="ScramblingSerializerWrapper.capitalize"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.ScramblingSerializerWrapper.capitalize">[docs]</a>    <span class="k">def</span> <span class="nf">capitalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="n">scrambled_word</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">scrambled_word</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">):</span>
+            <span class="c1"># if the two words have the same length, we preverve capitalization</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">scrambled_word</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                           <span class="k">if</span> <span class="n">word</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span>
+                           <span class="k">else</span> <span class="n">scrambled_word</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># just capitalize the first letter</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">scrambled_word</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">word</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span>
+                    <span class="k">else</span> <span class="n">scrambled_word</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="n">scrambled_word</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span></div>
+
+<div class="viewcode-block" id="ScramblingSerializerWrapper.unscramble"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.ScramblingSerializerWrapper.unscramble">[docs]</a>    <span class="k">def</span> <span class="nf">unscramble</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="n">scrambled_word</span><span class="p">,</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">token</span>
+        <span class="k">if</span> <span class="n">pos</span> <span class="o">==</span> <span class="s1">&#39;SILENCE&#39;</span> <span class="ow">or</span> <span class="n">pos</span> <span class="o">==</span> <span class="s1">&#39;PUNCT&#39;</span><span class="p">:</span>
+            <span class="c1"># if this is a space or a punctuation sign, don&#39;t do anything</span>
+            <span class="k">return</span> <span class="n">scrambled_word</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># say that we have apple -&gt; qwerty</span>
+            <span class="c1"># if the word is qwerty, we return apple</span>
+            <span class="k">if</span> <span class="n">scrambled_word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_word_mapping</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">capitalize</span><span class="p">(</span><span class="n">scrambled_word</span><span class="p">,</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">inv_word_mapping</span><span class="p">[</span>
+                                           <span class="n">scrambled_word</span><span class="o">.</span><span class="n">lower</span><span class="p">()])</span>
+            <span class="c1"># conversely, if the word is apple, we return qwerty</span>
+            <span class="c1"># so we have a bijection between the scrambled and normal words</span>
+            <span class="k">elif</span> <span class="n">scrambled_word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_mapping</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">capitalize</span><span class="p">(</span><span class="n">scrambled_word</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_mapping</span><span class="p">[</span>
+                    <span class="n">scrambled_word</span><span class="o">.</span><span class="n">lower</span><span class="p">()])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># otherwise we just return the word as is</span>
+                <span class="k">return</span> <span class="n">scrambled_word</span></div>
+
+<div class="viewcode-block" id="ScramblingSerializerWrapper.gen_pseudo_word"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.ScramblingSerializerWrapper.gen_pseudo_word">[docs]</a>    <span class="k">def</span> <span class="nf">gen_pseudo_word</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">L</span><span class="p">:</span>
+            <span class="n">L</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="c1"># generate one word that we hadn&#39;t used before</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">readable</span><span class="p">:</span>
+                <span class="c1"># alternating between vowels and consonants, sampled with repl.</span>
+                <span class="n">_choice</span><span class="p">,</span> <span class="n">_range</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">L</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)))</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">_choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">_range</span><span class="p">]</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="n">_choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">_range</span><span class="p">]</span>
+                <span class="n">zipped</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">getrandbits</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="nb">zip</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                <span class="n">pseudo_word</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">a</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">zipped</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">b</span><span class="p">])[:</span><span class="n">L</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pseudo_word</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
+                                      <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span><span class="p">,</span> <span class="n">L</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">pseudo_word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_word_mapping</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">pseudo_word</span></div>
+
+<div class="viewcode-block" id="ScramblingSerializerWrapper.tokenize"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.ScramblingSerializerWrapper.tokenize">[docs]</a>    <span class="k">def</span> <span class="nf">tokenize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Simplified tokenizer that splits a message over spaces and punctuation.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">punct</span> <span class="o">=</span> <span class="s2">&quot;,.:;&#39;</span><span class="se">\&quot;</span><span class="s2">?&quot;</span>
+        <span class="n">silence_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serializer</span><span class="o">.</span><span class="n">SILENCE_TOKEN</span>
+        <span class="n">tokenized_message</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(\W)&#39;</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">t</span><span class="p">:</span>
+                <span class="c1"># re.split can return empty strings between consecutive</span>
+                <span class="c1"># separators: ignore them.</span>
+                <span class="k">continue</span>
+            <span class="c1"># separate intial punctuation marks</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">punct</span><span class="p">:</span>
+                <span class="n">tokenized_message</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="s1">&#39;PUNCT&#39;</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="n">silence_token</span><span class="p">:</span>
+                <span class="n">tokenized_message</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="s1">&#39;SILENCE&#39;</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tokenized_message</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="s1">&#39;WORD&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">tokenized_message</span></div></div>
+
+
+<div class="viewcode-block" id="StandardSerializer"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.StandardSerializer">[docs]</a><span class="k">class</span> <span class="nc">StandardSerializer</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Transforms text into bits and back using UTF-8 format.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SILENCE_TOKEN</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SILENCE_ENCODING</span> <span class="o">=</span> <span class="sa">u</span><span class="s1">&#39; &#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="StandardSerializer.to_binary"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.StandardSerializer.to_binary">[docs]</a>    <span class="k">def</span> <span class="nf">to_binary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Given a text message, returns a binary string (still represented as a</span>
+<span class="sd">        character string).</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># All spaces are encoded as null bytes:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SILENCE_TOKEN</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SILENCE_ENCODING</span><span class="p">)</span>
+        <span class="c1"># handle unicode</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">codecs</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">message</span><span class="p">:</span>
+            <span class="c1"># get the numeric value of the character</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="c1"># already an int (Python 3)</span>
+                <span class="k">pass</span>
+            <span class="c1"># convert to binary</span>
+            <span class="n">bin_c</span> <span class="o">=</span> <span class="nb">bin</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="c1"># remove the &#39;0b&#39; prefix</span>
+            <span class="n">bin_c</span> <span class="o">=</span> <span class="n">bin_c</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+            <span class="c1"># pad with zeros</span>
+            <span class="n">bin_c</span> <span class="o">=</span> <span class="n">bin_c</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bin_c</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StandardSerializer.to_text"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.StandardSerializer.to_text">[docs]</a>    <span class="k">def</span> <span class="nf">to_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Transforms a binary string into text.</span>
+
+<span class="sd">        Given a binary string, returns the UTF-8 encoded text. If the</span>
+<span class="sd">        string cannot be deserialized, returns None. It can also try to</span>
+<span class="sd">        recover from meaningless data by skipping a few bytes in the beginning.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: the binary string to deserialze.</span>
+<span class="sd">            strict: if False, the initial bytes can be skipped in order to</span>
+<span class="sd">            find a valid character. This allows to recover from randomly</span>
+<span class="sd">            produced bit strings.</span>
+
+<span class="sd">        Returns: A string with containing the decoded text.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># if we are not in strict mode, we can skip bytes to find a message</span>
+        <span class="k">for</span> <span class="n">skip</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">strict</span> <span class="k">else</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># convert data to a byte-stream</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+                <span class="n">sub_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">skip</span> <span class="o">*</span> <span class="mi">8</span><span class="p">:]</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sub_data</span><span class="p">)</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)):</span>
+                    <span class="n">b</span> <span class="o">=</span> <span class="n">sub_data</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">8</span><span class="p">:(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">8</span><span class="p">]</span>
+                    <span class="n">message</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="n">codecs</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SILENCE_ENCODING</span><span class="p">,</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">SILENCE_TOKEN</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">skip</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Skipping </span><span class="si">{0}</span><span class="s2"> bytes to find a valid &quot;</span>
+                                     <span class="s2">&quot;unicode character&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">skip</span><span class="p">))</span>
+
+                <span class="k">return</span> <span class="n">message</span>
+            <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="StandardSerializer.can_deserialize"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.StandardSerializer.can_deserialize">[docs]</a>    <span class="k">def</span> <span class="nf">can_deserialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_text</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div></div>
+
+
+<div class="viewcode-block" id="GeneralSerializer"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.GeneralSerializer">[docs]</a><span class="k">class</span> <span class="nc">GeneralSerializer</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Transforms text into bits and back using specified mapping.</span>
+<span class="sd">    Expects an index to symbol mapping `i2s`.</span>
+<span class="sd">    silence_idx is which index in mapping is silence, defaults to 0</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i2s</span><span class="p">,</span> <span class="n">silence_idx</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SILENCE_TOKEN</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SILENCE_ENCODING</span> <span class="o">=</span> <span class="n">silence_idx</span> <span class="k">if</span> <span class="n">silence_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">i2s</span> <span class="o">=</span> <span class="n">i2s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s2i</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">i2s</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">s2i</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i2s</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+
+        <span class="c1"># pad end of dictionary with silence</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i2s</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">i2s</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SILENCE_TOKEN</span>
+
+        <span class="k">assert</span> <span class="n">i2s</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">SILENCE_ENCODING</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">SILENCE_TOKEN</span><span class="p">,</span> \
+                                                <span class="s1">&#39;mapping conflict for silence&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GeneralSerializer.to_binary"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.GeneralSerializer.to_binary">[docs]</a>    <span class="k">def</span> <span class="nf">to_binary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Given a text message, returns a binary string (still represented as a</span>
+<span class="sd">        character string).</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">codecs</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">message</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">s2i</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+            <span class="n">bin_c</span> <span class="o">=</span> <span class="nb">bin</span><span class="p">(</span><span class="n">c</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span>
+            <span class="n">bin_c</span> <span class="o">=</span> <span class="n">bin_c</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bin_c</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GeneralSerializer.to_text"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.GeneralSerializer.to_text">[docs]</a>    <span class="k">def</span> <span class="nf">to_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Transforms a binary string into text.</span>
+
+<span class="sd">        Given a binary string, returns the encoded text. If the</span>
+<span class="sd">        string cannot be deserialized, returns None.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: the binary string to deserialze.</span>
+
+<span class="sd">        Returns: A string with containing the decoded text.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">buff</span> <span class="o">=</span> <span class="n">codecs</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="sa">u</span><span class="s1">&#39;&#39;</span>
+        <span class="k">while</span> <span class="n">buff</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">buff</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">text</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">i2s</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">buff</span> <span class="o">=</span> <span class="n">buff</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">text</span></div>
+
+<div class="viewcode-block" id="GeneralSerializer.can_deserialize"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.GeneralSerializer.can_deserialize">[docs]</a>    <span class="k">def</span> <span class="nf">can_deserialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_text</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div></div>
+
+
+<div class="viewcode-block" id="ASCIISerializer"><a class="viewcode-back" href="../../core.serializer.html#core.serializer.ASCIISerializer">[docs]</a><span class="k">class</span> <span class="nc">ASCIISerializer</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Transforms text into bits and back according to ASCII format.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">i2s</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">):</span>
+            <span class="n">i2s</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">GeneralSerializer</span><span class="p">(</span><span class="n">i2s</span><span class="p">,</span> <span class="nb">ord</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">))</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">CommAI-env 0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Facebook.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>

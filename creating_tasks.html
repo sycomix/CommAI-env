@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>How to create a new task &#8212; CommAI-env 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to CommAI-env’s documentation!" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to CommAI-env’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CommAI-env 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="how-to-create-a-new-task">
+<h1>How to create a new task<a class="headerlink" href="#how-to-create-a-new-task" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="creating-your-task-step-by-step">
+<h2>Creating your task step-by-step<a class="headerlink" href="#creating-your-task-step-by-step" title="Permalink to this headline">¶</a></h2>
+<p>The first thing you need to do, is creating a python file (it’s nicer if you create it under the tasks directory) and import the necessary Task class and related tools::</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">core.task</span> <span class="k">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">on_start</span><span class="p">,</span> <span class="n">on_message</span><span class="p">,</span> <span class="n">on_sequence</span><span class="p">,</span>\
+    <span class="n">on_state_changed</span><span class="p">,</span> <span class="n">on_timeout</span><span class="p">,</span> <span class="n">on_output_message</span><span class="p">,</span> <span class="n">on_init</span>
+</pre></div>
+</div>
+<p>In order to define a task, the first thing you need to do is subclassing the Task class as follows. You can omit the world parameter if it doesn’t run on any world.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MyTask</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">max_time</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">world</span><span class="o">=</span><span class="n">world</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then, you will need to define how it will react to a set of events (e.g. when the task  is starting, when the learner has produced some expected message, etc.). This is achieved by defining event handlers which have this general form::</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@on_</span><span class="o">&lt;</span><span class="nb">type</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">event</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&lt;</span><span class="n">some</span><span class="o">-</span><span class="n">optional</span><span class="o">-</span><span class="n">parameters</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">on_my_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+    <span class="o">...</span><span class="n">code</span><span class="o">...</span>
+</pre></div>
+</div>
+<p>There are a number of events that have been contemplated, which are detailed below. Also, the reactions to these event can include calling primitives to affect the environment actions, like setting the output message or rewarding the agent.</p>
+<p>When you are done with writing your task, you can instantiate it from the main file and send it to the scheduler  so it will be run with the other tasks (see points 2 and 3 in the Summary).</p>
+</div>
+<div class="section" id="event-handlers">
+<span id="events"></span><h2>Event Handlers<a class="headerlink" href="#event-handlers" title="Permalink to this headline">¶</a></h2>
+<p>In order to create an event handler, you need to the define a method (like on_my_event above) annotated with the type of event that you want to catch. These are the possible annotations you can use:</p>
+<ul class="simple">
+<li><p><cite>on_init</cite>: Fires when a task is about to be run, but it hasn’t started yet. It serves for initialization purposes. It doesn’t trigger <cite>StateChanged</cite> events.</p></li>
+<li><p><cite>on_start</cite>: Fires when a task actually starts. Differently from <cite>on_init</cite>, <cite>StateChanged</cite> events get triggered if the <cite>state</cite> variable is modified from this handler.</p></li>
+<li><p><cite>on_message</cite>: Fires whenever the agent sends a message. It optionally takes a regular expression to match only a specified set of messages. The event object contains a “message” field, containing the message that has been received. Finally, two other helper methods have been introduced in the event object. The first, is_message, takes a string and checks whether the last part of the message exactly matches this string (see RepeatingCharTask for an example). The second, get_match, returns the part of the message that has been matched against the regular expression that parametrizes on_message. Optionally, if this regular expression contains groups (parentheses-demarcated chunks), you can give the group number as an argument to retrieve any of these sub-matches (see on_pick_up in the grid world for an example).</p></li>
+<li><p><cite>on_sequence</cite>: Like on_message, but operates on sequences of bits (actually a string of 1s and 0s). The event object contains a “sequence” field, containing the sequence that has been received so far.</p></li>
+<li><p><cite>on_output_message</cite>: Same as on_message, but it matches against what the environment has said.</p></li>
+<li><p><cite>on_output_sequence</cite>: Same as on_sequence, but it matches against what the environment has said.</p></li>
+<li><p><cite>on_state_changed</cite>: Every task and every world implicitly have a state object where you can store any properties you want (by doing self.state.my_variable_state = some_value). You can catch whenever the state object gets modified by annotating your handler with on_state_changed.  This takes as a parameter either a one-argument or a two-argument function (depending on whether there is a world state in conjunction with the task state or not). In python, anonymous functions can be defined, for example, like lambda ts: ts.my_variable_state == 10 for the one argument case or lambda ws, ts: ts.my_variable_state == ws.my_world_variable_state  for the two argument case. In the one argument case, the function is fed the state object of the task. In the two argument case, the function is fed the world state object and the task state object. See the MovingTask for an example, it’s easier than it looks.</p></li>
+<li><p><cite>on_timeout</cite>: Gets triggered when we reached the maximum amount of time steps.</p></li>
+<li><p><cite>on_world_init</cite>: Like <cite>on_init</cite>, but when a world is being initialized.</p></li>
+<li><p><cite>on_world_start</cite>: Like <cite>on_start</cite>, but when a world is being started.</p></li>
+</ul>
+</div>
+<div class="section" id="state-variables">
+<h2>State variables<a class="headerlink" href="#state-variables" title="Permalink to this headline">¶</a></h2>
+<p>Both Tasks and Worlds have a special variable called <cite>state</cite>. What’s special
+about this object is that when an attribute stored within it changes it’s value,
+it will trigger a StateChanged event. This holds true recursively for containers
+stored within this object. For example, say that you have a dictionary created
+in <cite>this.state.my_dict</cite>. And, in the context of a task, you do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">this</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">my_dict</span><span class="p">[</span><span class="s1">&#39;apple&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;green&#39;</span>
+</pre></div>
+</div>
+<p>this will also trigger a StateChanged event.</p>
+</div>
+<div class="section" id="defining-event-handlers-at-runtime">
+<h2>Defining Event Handlers at “runtime”<a class="headerlink" href="#defining-event-handlers-at-runtime" title="Permalink to this headline">¶</a></h2>
+<p>Say that you are in the middle of your start (say, on the start event) and you want to add a new event handler on the fly. You can do this, by inserting a code snippet just as the following (notice that you can define a function within a function)::</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="nd">@on_start</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">my_task_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+         <span class="o">...</span> <span class="o">&lt;</span><span class="n">something</span> <span class="n">something</span><span class="o">&gt;</span> <span class="o">...</span>
+         <span class="k">def</span> <span class="nf">my_success_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">set_reward</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">add_handler</span><span class="p">(</span><span class="n">on_</span><span class="o">&lt;</span><span class="n">event</span><span class="o">&gt;</span><span class="p">(</span><span class="n">my_success_handler</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>This also works if <cite>my_success_handler</cite> is an instance method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="nd">@on_start</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">my_task_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+         <span class="o">...</span> <span class="o">&lt;</span><span class="n">something</span> <span class="n">something</span><span class="o">&gt;</span> <span class="o">...</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">add_handler</span><span class="p">(</span><span class="n">on_</span><span class="o">&lt;</span><span class="n">event</span><span class="o">&gt;</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_success_handler</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">my_success_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">set_reward</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="action-primitives">
+<h2>Action Primitives<a class="headerlink" href="#action-primitives" title="Permalink to this headline">¶</a></h2>
+<p>Here are the few things you can do to affect the environment behavior. The Task and World classes have the following inherited methods:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">set_message(message,</span> <span class="pre">priority=0)</span></code>: Writes into the output buffer a message with the given priority only if there is no other message being sent with a higher priority.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">set_reward(reward,</span> <span class="pre">message='',</span> <span class="pre">priority=0)</span></code>:  Rewards the learner and ends the task. You can also send a finalization message with the given priority (the priority only applies to the message, not rewards).</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">ignore_last_char()</span></code>: removes (or rather, masks with silence) the last character that has been received from the learner. This does not have an effect on already-fired MessageReceived events. Useful if you want to ignore the learner until some later instant.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="guidelines-for-the-competition-tasks">
+<h1>Guidelines for the Competition tasks<a class="headerlink" href="#guidelines-for-the-competition-tasks" title="Permalink to this headline">¶</a></h1>
+<p>For the tasks that actually form part of the competition we have typically
+follow some guidelines:</p>
+<ul>
+<li><p>The tasks ignore the learner if the Environment is speaking. This behavior is provided for free by inheriting from BaseTask instead of Task:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyTask</span><span class="p">(</span><span class="n">BaseTask</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MyTask</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">max_time</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">world</span><span class="o">=</span><span class="n">world</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>All the messages sent by the Environment and the Learner are assumed to end in some punctuation marker.</p></li>
+<li><p>Generally we don’t allow “substring” answers. For example, if the correct answer is “apple”, we don’t allow “dasdfsapplefdsf”</p></li>
+<li><p>General language and messages that are shared across tasks are kept in the <cite>tasks.competition.messages</cite> module.</p></li>
+<li><p>Tasks should present some kind of feedback, but the specifics of it are decided on a task-by-task basis.</p></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">How to create a new task</a><ul>
+<li><a class="reference internal" href="#creating-your-task-step-by-step">Creating your task step-by-step</a></li>
+<li><a class="reference internal" href="#event-handlers">Event Handlers</a></li>
+<li><a class="reference internal" href="#state-variables">State variables</a></li>
+<li><a class="reference internal" href="#defining-event-handlers-at-runtime">Defining Event Handlers at “runtime”</a></li>
+<li><a class="reference internal" href="#action-primitives">Action Primitives</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#guidelines-for-the-competition-tasks">Guidelines for the Competition tasks</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to CommAI-env’s documentation!</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/creating_tasks.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to CommAI-env’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CommAI-env 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Facebook.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>
